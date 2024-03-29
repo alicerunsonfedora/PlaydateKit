@@ -3,12 +3,18 @@
 import Foundation
 import PackageDescription
 
+
+#if os(macOS)
 let gccIncludePrefix =
     "/usr/local/playdate/gcc-arm-none-eabi-9-2019-q4-major/lib/gcc/arm-none-eabi/9.2.1"
-guard let home = ProcessInfo.processInfo.environment["HOME"] else {
+#else
+// Note: this may change depending on how the ARM GNU toolchain is installed.
+let gccIncludePrefix = "/usr/local/share/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/lib"
+#endif
+
+guard let home = Context.environment["HOME"] else {
     fatalError("could not determine home directory")
 }
-
 let package = Package(
     name: "PlaydateKit",
     products: [.library(name: "PlaydateKit", targets: ["PlaydateKit"])],
