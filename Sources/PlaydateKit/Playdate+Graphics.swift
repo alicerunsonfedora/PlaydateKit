@@ -251,17 +251,19 @@ public extension Playdate {
 
             /// Returns a `Font` object for the font file at `path`.
             /// > Warning: Currently unsafe due to https://github.com/finnvoor/PlaydateKit/issues/7
-            public init(path: StaticString) {
+            public init(path: StaticString) throws(Playdate.Error) {
                 var error: UnsafePointer<CChar>?
                 let pointer = graphics.loadFont(path.utf8Start, &error)
+                if let error { throw Playdate.Error(humanReadableText: error) }
                 self.pointer = pointer.unsafelyUnwrapped
             }
 
             /// Returns a `Font` object for the font file at `path`.
             /// > Warning: Currently unsafe due to https://github.com/finnvoor/PlaydateKit/issues/7
-            public init(path: UnsafeMutablePointer<CChar>) {
+            public init(path: UnsafeMutablePointer<CChar>) throws(Playdate.Error) {
                 var error: UnsafePointer<CChar>?
                 let pointer = graphics.loadFont(path, &error)
+                if let error { throw Playdate.Error(humanReadableText: error) }
                 self.pointer = pointer.unsafelyUnwrapped
             }
 
@@ -269,9 +271,11 @@ public extension Playdate {
             /// of an uncompressed pft file. `wide` corresponds to the flag in the header indicating whether the font contains
             /// glyphs at codepoints above U+1FFFF.
             /// > Warning: Currently unsafe due to https://github.com/finnvoor/PlaydateKit/issues/7
-            public init(data: OpaquePointer, wide: Bool) {
-                let pointer = graphics.makeFontFromData(data, wide ? 1 : 0)
-                self.pointer = pointer.unsafelyUnwrapped
+            public init?(data: OpaquePointer, wide: Bool) {
+                guard let pointer = graphics.makeFontFromData.unsafelyUnwrapped(data, wide ? 1 : 0) else {
+                    return nil
+                }
+                self.pointer = pointer
             }
 
             deinit {
