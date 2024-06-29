@@ -17,7 +17,9 @@ guard let home = Context.environment["HOME"] else {
 }
 let package = Package(
     name: "PlaydateKit",
-    products: [.library(name: "PlaydateKit", targets: ["PlaydateKit"])],
+    products: [
+        .library(name: "PlaydateKit", targets: ["PlaydateKit"]),
+        .library(name: "CPlaydate", targets: ["CPlaydate"])],
     targets: [
         .target(name: "PlaydateKit", dependencies: ["CPlaydate"], swiftSettings: [
             .enableExperimentalFeature("Embedded"),
